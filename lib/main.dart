@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(
-      const Column(
-        children: [
-          Text(
-            'Bem vindo ao primeiro Texto Flutter',
-            textDirection: TextDirection.ltr,
+void main() => runApp(MaterialApp(
+      home: Scaffold(
+          body: const Card(
+            child: Text('Teste'),
           ),
-          Text(
-            'Bem vindo ao segundo Texto Flutter',
-            textDirection: TextDirection.ltr,
+          appBar: AppBar(
+            title: const Text('Transferências'),
           ),
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.contain, // otherwise the logo will be tiny
-              child: FlutterLogo(),
-            ),
-          ),
-        ],
-      ),
-    );
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          )),
+    ));
