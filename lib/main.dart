@@ -1,26 +1,60 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(
+void main() => runApp(
+      BankApp(),
+    );
+
+class BankApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       home: Scaffold(
-          body: ListaTransferencias(),
-          appBar: AppBar(
-            title: const Text('Transferências'),
+        body: FomularioTransferencia(),
+      ),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class FomularioTransferencia extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Criando Transferência'),
+      ),
+      body: const Column(
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              labelText: 'Número da conta',
+              hintText: '0000',
+            ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          )),
-    ));
+        ],
+      ),
+    );
+  }
+}
 
 class ListaTransferencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Column(children: [
-      ItemTransferencia(Transferencia(100.00, 123456)),
-      ItemTransferencia(Transferencia(200.00, 654321)),
-      ItemTransferencia(Transferencia(300.00, 987654)),
-    ]);
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Transferências'),
+        ),
+        body: Column(
+          children: [
+            ItemTransferencia(Transferencia(546.20, 1000)),
+            ItemTransferencia(Transferencia(7895.10, 2000)),
+            ItemTransferencia(Transferencia(54890.30, 3000)),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.add),
+        ));
   }
 }
 
