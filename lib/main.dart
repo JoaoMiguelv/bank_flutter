@@ -30,45 +30,36 @@ class FomularioTransferencia extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _controladorCampoNumeroConta,
-              style: TextStyle(
-                fontSize: 24.0,
-              ),
-              decoration: InputDecoration(
-                labelText: 'Número da conta',
-                hintText: '0000',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _controladorCampoValor,
-              style: TextStyle(
-                fontSize: 24.0,
-              ),
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.monetization_on,
-                  color: Colors.green,
-                ),
-                labelText: 'Valor',
-                hintText: '0.00',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ),
+          Editor(
+              _controladorCampoNumeroConta,
+              'Número Conta',
+              '0000',
+              const Icon(
+                Icons.account_balance,
+                color: Colors.blue,
+              )),
+          Editor(
+              _controladorCampoValor,
+              'Valor',
+              '0.00',
+              const Icon(
+                Icons.monetization_on,
+                color: Colors.green,
+              )),
           ElevatedButton(
             onPressed: () {
-              final int numeroConta =
-                  int.parse(_controladorCampoNumeroConta.text);
-              final double valor = double.parse(_controladorCampoValor.text);
-
-              Transferencia(valor, numeroConta);
+              // ignore: unnecessary_null_comparison
+              if (_controladorCampoNumeroConta.text != '' ||
+                  // ignore: unnecessary_null_comparison
+                  _controladorCampoValor.text != '') {
+                final int numeroConta =
+                    int.parse(_controladorCampoNumeroConta.text);
+                final double valor = double.parse(_controladorCampoValor.text);
+                final transferenciaCriada = Transferencia(valor, numeroConta);
+                debugPrint(transferenciaCriada.toString());
+              } else {
+                debugPrint('Campos vazios');
+              }
             },
             child: const Text('Confirmar'),
           ),
@@ -121,4 +112,37 @@ class Transferencia {
   final int numeroConta;
 
   Transferencia(this.valor, this.numeroConta);
+
+  @override
+  String toString() {
+    return 'Transferencia{valor: $valor, numeroConta: $numeroConta}';
+  }
+}
+
+class Editor extends StatelessWidget {
+  final TextEditingController _controlador;
+  final String _rotulo;
+  final String _dica;
+  final Icon _icone;
+
+  Editor(this._controlador, this._rotulo, this._dica, this._icone);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextField(
+        controller: _controlador,
+        style: const TextStyle(
+          fontSize: 24.0,
+        ),
+        decoration: InputDecoration(
+          icon: _icone,
+          labelText: _rotulo,
+          hintText: _dica,
+        ),
+        keyboardType: TextInputType.number,
+      ),
+    );
+  }
 }
