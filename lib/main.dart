@@ -17,19 +17,60 @@ class BankApp extends StatelessWidget {
 }
 
 class FomularioTransferencia extends StatelessWidget {
+  final TextEditingController _controladorCampoNumeroConta =
+      TextEditingController();
+
+  final TextEditingController _controladorCampoValor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Criando Transferência'),
       ),
-      body: const Column(
+      body: Column(
         children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Número da conta',
-              hintText: '0000',
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _controladorCampoNumeroConta,
+              style: TextStyle(
+                fontSize: 24.0,
+              ),
+              decoration: InputDecoration(
+                labelText: 'Número da conta',
+                hintText: '0000',
+              ),
+              keyboardType: TextInputType.number,
             ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _controladorCampoValor,
+              style: TextStyle(
+                fontSize: 24.0,
+              ),
+              decoration: InputDecoration(
+                icon: Icon(
+                  Icons.monetization_on,
+                  color: Colors.green,
+                ),
+                labelText: 'Valor',
+                hintText: '0.00',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final int numeroConta =
+                  int.parse(_controladorCampoNumeroConta.text);
+              final double valor = double.parse(_controladorCampoValor.text);
+
+              Transferencia(valor, numeroConta);
+            },
+            child: const Text('Confirmar'),
           ),
         ],
       ),
