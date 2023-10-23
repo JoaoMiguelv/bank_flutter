@@ -1,5 +1,7 @@
 import 'dart:math';
-
+import 'package:bank/route/app_routes.dart';
+import 'package:bank/view/contact-form.dart';
+import 'package:bank/view/home.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(
@@ -10,9 +12,12 @@ class BanckApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: ListaTransferencias(),
-      ),
+      // home: Home(),
+      routes: {
+        AppRoutes.HOME: (_) => Home(),
+        AppRoutes.CONTACT_FORM: (_) => ContactForm(),
+      },
+      title: 'BankDSM',
       debugShowCheckedModeBanner: false,
     );
   }
@@ -31,37 +36,40 @@ class FormularioTransferencia extends StatelessWidget {
           'Criando Transferência',
         ),
       ),
-      body: Column(
-        children: [
-          Editor(
-            controlador: _controladorCampoNumeroConta,
-            icon: Icon(
-              Icons.account_balance_outlined,
-              color: Colors.blue,
+      backgroundColor: Colors.grey[400],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Editor(
+              controlador: _controladorCampoNumeroConta,
+              icon: Icon(
+                Icons.account_balance_outlined,
+                color: Colors.blue,
+              ),
+              rotulo: 'Numero da conta',
+              dica: '0000',
             ),
-            rotulo: 'Numero da conta',
-            dica: '0000',
-          ),
-          Editor(
-            controlador: _controladorCampoValor,
-            icon: Icon(
-              Icons.monetization_on,
-              color: Colors.green,
+            Editor(
+              controlador: _controladorCampoValor,
+              icon: Icon(
+                Icons.monetization_on,
+                color: Colors.green,
+              ),
+              rotulo: 'Valor',
+              dica: '0.00',
             ),
-            rotulo: 'Valor',
-            dica: '0.00',
-          ),
-          ElevatedButton(
-            child: Text('Conrfirmar'),
-            onPressed: () {
-              _criaTransferencia(
-                context,
-                _controladorCampoNumeroConta,
-                _controladorCampoValor,
-              );
-            },
-          ),
-        ],
+            ElevatedButton(
+              child: Text('Conrfirmar'),
+              onPressed: () {
+                _criaTransferencia(
+                  context,
+                  _controladorCampoNumeroConta,
+                  _controladorCampoValor,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -76,7 +84,6 @@ class FormularioTransferencia extends StatelessWidget {
     final double? valor = double.tryParse(_controladorCampoValor.text);
     if (numeroConta != null && valor != null) {
       final transferenciaCriada = Transferencia(valor, numeroConta);
-      debugPrint('Criando transferência');
       debugPrint('$transferenciaCriada');
       Navigator.pop(context, transferenciaCriada);
     }
@@ -85,8 +92,7 @@ class FormularioTransferencia extends StatelessWidget {
 
 //
 class ListaTransferencias extends StatefulWidget {
-  final List<Transferencia?> _transferencias = [];
-
+  final List<Transferencia> _transferencias = [];
   @override
   State<StatefulWidget> createState() {
     return ListaTransferenciasState();
@@ -94,44 +100,63 @@ class ListaTransferencias extends StatefulWidget {
 }
 
 class ListaTransferenciasState extends State<ListaTransferencias> {
+  String _formatarValor(double valor) {
+    // Converte o valor para uma string com duas casas decimais
+    String valorFormatado = valor.toStringAsFixed(2);
+
+    // Substitui o ponto por vírgula para representar as casas decimais
+    valorFormatado = valorFormatado.replaceAll('.', ',');
+
+    // Adiciona o símbolo da moeda (R$) no início da string
+    valorFormatado = 'R\$ ' + valorFormatado;
+
+    return valorFormatado;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text("Transferências"),
+        backgroundColor: Colors.green,
       ),
+      backgroundColor: Colors.grey[400],
       body: ListView.builder(
         itemCount: widget._transferencias.length,
         itemBuilder: (context, indice) {
           final transferencia = widget._transferencias[indice];
-          return ItemTransferencia(transferencia!);
+          String valorFormatado = _formatarValor(transferencia.valor);
+          return Card(
+            child: ListTile(
+              leading: Icon(
+                Icons.monetization_on,
+                color: Colors.green,
+              ),
+              title: Text(valorFormatado),
+              subtitle: Text(transferencia.numeroConta.toString()),
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final Future<Transferencia?> future = Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return FormularioTransferencia();
-              },
-            ),
-          );
-          future.then(
-            (tranferenciaRecebida) {
-              debugPrint('chegou no then');
-              debugPrint('$tranferenciaRecebida');
-
-              if (tranferenciaRecebida != null) {
-                setState(() {
-                  widget._transferencias.add(tranferenciaRecebida);
-                });
-              }
-            },
-          );
+          final Future<Transferencia?> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            debugPrint('Chegou no then do future');
+            debugPrint('$transferenciaRecebida');
+            if (transferenciaRecebida != null) {
+              setState(() {
+                widget._transferencias.add(transferenciaRecebida);
+              });
+            }
+          });
         },
         child: Icon(Icons.add),
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.green,
       ),
     );
   }
